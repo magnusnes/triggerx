@@ -1,0 +1,18 @@
+Package: trigger
+Title: Manage multiprocess dependencies
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Magnus",
+           family = "Nesheim",
+           role = c("aut", "cre"),
+           email = "magnus.nesheim@gmail.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/magnusnes/trigger
+BugReports: https://github.com/magnusnes/trigger/issues
+Suggests: 
+    testthat,
+    covr

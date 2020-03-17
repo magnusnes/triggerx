@@ -37,3 +37,10 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+.Rproj.user
+project.Rcheck/
+project*.tar.gz
+project*.tgz
+trigger.Rcheck/
+trigger*.tar.gz
+trigger*.tgz
