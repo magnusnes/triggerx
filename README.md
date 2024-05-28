@@ -1,65 +1,112 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # trigger
 
-<!-- badges: start -->
+## Innledning
 
-[![Codecov test
-coverage](https://codecov.io/gh/magnusnes/trigger/branch/master/graph/badge.svg)](https://codecov.io/gh/magnusnes/trigger?branch=master)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![Travis build
-status](https://travis-ci.org/magnusnes/trigger.svg?branch=master)](https://travis-ci.org/magnusnes/trigger)
-<!-- badges: end -->
+Trigger er en lettvektsversjon av airflow for R, som kan brukes til å planlegge, sett i gang og overvåke jobber.
 
-The goal of trigger is to …
+Programvaren har en oversikt over registrerte jobber, og en oversikt over kjøringer. Den registrerer når jobber starter, når de stopper, og hvilken status de stopper med.
+Den tar i mot feilmeldinger ved stans grunnet `error`/`warning`, og varsler om status på jobber til personer som er registrert for dette. Den går daglig gjennom hvilke jobber som skulle vært kjørt, og hvilke jobber som er kjørt, og sender ut varsel om dette.
 
-## Installation
+Programvaren kommer med en shiny-app, der man kan overvåke jobber, se hvilke jobber som skulle gå på en gitt dato, og hvilke jobber som har gått.
 
-You can install the released version of trigger from
-[CRAN](https://CRAN.R-project.org) with:
+Programvaren bygger på `rsqlite`, `dplyr`, `callr`, `lubridate` og `sbmailr`. Web-applikasjonen bygger på `shiny` og `bs4dash`.
 
-``` r
-install.packages("trigger")
+
+## Installasjon og oppsett
+
+Installer filen med følgende kommando
+
+```r
+renv::install("trigger")
+
+```
+.
+
+Angi plasseringen av databasen.
+
+```r
+locate_database(path = "<path/to/database>")
 ```
 
-And the development version from [GitHub](https://github.com/) with:
+Innstaller databasen med nødvendige tabeller på angitt plass.
 
-``` r
-# install.packages("devtools")
-devtools::install_github("magnusnes/trigger")
+```r
+init()
 ```
 
-## Example
 
-This is a basic example which shows you how to solve a common problem:
+## Bruk
 
-``` r
-library(trigger)
-## basic example code
+
+
+### Registrer jobb
+
+Før en jobb sin kjøringer kan registreres i trigger må selve jobben registres i `trigger`-databasen. Det gjør du på følgende måte:
+
+```
+registrer_job(
+  navn = "Daglig datalast",
+  hyppighet = run_frequencies$daily()
+)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+Navnet på jobben må være unikt for jobben, og for angivelse av hyppighet kan du bruke funksjonene `daily()` eller `monthly()` fra listen `run_frequency`. 
+Dersom du oppgir et navn som alt er registrert i databsen vil du få en feilmelding som antyder dette.
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+Kjøre koden som jobben består av gjør du det på følgende måte:
+
+```r
+run_job <- set_up_job_runner(
+  name = "Daglig datalast",
+  alerts = "example@email.com"
+)
+
+run_job({
+  # source("script.r")
+})
+
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
+`alerts` om noen skal varsles når jobben er ferdig, mens `waiting_for` angir om denne jobben skal vente til en annen jobb er ferdig. 
 
-You can also embed plots, for example:
+## Programvarearkitektur
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+Programvaren er bygget opp med følgende mappestruktur, database og funksjoner.
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub\!
+### Mappestruktur
+
+- `<path>/database/trigger.sqlite` inneholder databasen
+- `<path>/logfiles/<job_name>/log_message_<date>.log` inneholder logg-meldinger.
+
+### Database
+
+Programvaren bygger på en filbasert SQLIite-database der informasjon registreres. Databasen har følgende tabeller
+
+- `jobs` inneholder en oversikt over jobbene som kjøres
+- `runs` er en tabell som inneholder aggregert informasjon fra alle kjøringer.
+- `events` er en transaksjonstabell som inneholder informasjon fra alle kjøringer.
+
+### Funksjoner
+
+- **Installasjon/oppsett**
+  - `locate_database()`
+  - `init()`
+- **Kjøring**
+  - `register_job()`
+  - `run_frequency`
+  - `set_up_job_runner()`
+  - `get_job_status()`
+  - `job_is_complete()`
+- **Applikasjon**
+  - `get_jobs()`
+  - `get_runs()`
+  - `get_planned_runs()`
+  - `launch_monitor()`
+- **Status**
+  - `review_runs()`
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+destination: /home/c900747/ShinyApps/doc/trigger/
+url: http://rserver_dev:3838/dev/c900747/doc/trigger/
+repo:
+  url:
+    home: http://sbmgitlab/risikostyring/infrastruktur/trigger/
+    source: http://sbmgitlab/risikostyring/infrastruktur/trigger/-/tree/produksjon/
+    issue: http://sbmgitlab/risikostyring/infrastruktur/trigger/-/issues/
+development:
+  mode: auto
+  destination: dev
+  version_label: danger
+template:
+  bootstrap: 5
+  bootswatch: flatly
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - news
+    right:
+    - gitlab
+    - status
+    - versjonsplan
+  components:
+    gitlab:
+      icon: fa-gitlab
+      href: http://sbmgitlab/risikostyring/infrastruktur/trigger/
+      aria-label: Gitlab
+      text: Gitlab
+    status:
+      icon: fa-stream
+      href: http://sbmgitlab/risikostyring/infrastruktur/trigger/-/boards/300
+      aria-label: Status
+      text: Status
+    versjonsplan:
+      icon: fa-road
+      href: http://sbmgitlab/risikostyring/infrastruktur/trigger/-/boards/301
+      aria-label: Versjonsplan
+      text: Versjonsplan

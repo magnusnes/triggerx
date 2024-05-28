@@ -1,0 +1,52 @@
+---
+title: "Testdekning"
+output: rmarkdown::html_document
+---
+
+```{r include=FALSE}
+make_url <- function(base, ...) {
+  parts <- unlist(list(...))
+  
+  # Remove leading/trailing slashes from the parts
+  parts <- gsub("^/|/$", "", parts)
+  
+  # Combine the base and the parts, adding slashes between them
+  url <- paste0(base, "/", paste(parts, collapse = "/"))
+  
+  # Correcting for cases where base URL already ends with a slash
+  url <- gsub("([^:])/{2,}", "\\1/", url)
+  
+  return(url)
+}
+```
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+x <- pkgdown:::as_pkgdown(pkg = "..")
+url <- make_url(x$meta$url,x$prefix,"coverage", "coverage.html")
+```
+
+<style>
+.shiny-app-frame {
+  position: fixed;
+  left: 0;
+  top: 195px;
+  bottom: 0;
+  right: 0;
+}
+.shiny-app-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+</style>
+
+<div class="shiny-app-frame"> 
+<iframe src="`r url`">
+</iframe>
+</div>
